@@ -7,10 +7,16 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.Toast;
+import com.example.gmail.proxies.GmailProxy;
+import custom.gmail.Connector;
 
 public class MainActivity extends Activity
 {
+
+    GmailProxy gmail;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -31,8 +37,11 @@ public class MainActivity extends Activity
             return;
         }
 
-        Toast.makeText(MainActivity.this, email, Toast.LENGTH_SHORT).show();
-        Toast.makeText(MainActivity.this, password, Toast.LENGTH_SHORT).show();
+        ListView messagesListView = (ListView) findViewById(R.id.messages_list);
+
+        Connector connector = new Connector(email, password);
+        gmail = new GmailProxy(connector, MainActivity.this);
+        gmail.loadInbox(messagesListView, android.R.layout.simple_list_item_1, android.R.id.text1);
     }
 
     @Override
@@ -52,6 +61,7 @@ public class MainActivity extends Activity
                 startActivity(intent);
                 return true;
             case R.id.menu_update:
+                gmail.nextPage();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

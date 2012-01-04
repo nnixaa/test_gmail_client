@@ -13,8 +13,8 @@ import java.util.Properties;
  */
 public class Connector {
 
-    final public static String TAG          = "GmailReader";
-    final public static String GMAIL_IMAP   = "imap.gmail.com";
+    final private static String TAG = "Connector";
+    final private static String GMAIL_IMAP   = "imap.gmail.com";
 
     private String email        = "";
     private String password     = "";

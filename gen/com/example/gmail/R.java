@@ -11,12 +11,13 @@ public final class R {
     public static final class attr {
     }
     public static final class id {
-        public static final int menu_settings=0x7f050004;
-        public static final int menu_update=0x7f050005;
-        public static final int settings_button_submit=0x7f050003;
-        public static final int settings_email_input=0x7f050001;
-        public static final int settings_password_input=0x7f050002;
-        public static final int settings_title=0x7f050000;
+        public static final int menu_settings=0x7f050005;
+        public static final int menu_update=0x7f050006;
+        public static final int messages_list=0x7f050000;
+        public static final int settings_button_submit=0x7f050004;
+        public static final int settings_email_input=0x7f050002;
+        public static final int settings_password_input=0x7f050003;
+        public static final int settings_title=0x7f050001;
     }
     public static final class layout {
         public static final int main=0x7f020000;
