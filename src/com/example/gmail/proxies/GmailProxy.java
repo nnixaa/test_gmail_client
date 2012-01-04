@@ -107,6 +107,7 @@ public class GmailProxy {
     private Cursor getMessagesFromDb(Integer page, boolean all) {
         String where = databaseHelper.FIELD_TYPE + " = ? ";
         String[] selectionArgs = {type};
+
         Integer count = page * getCount();
         Integer from = 0;
 

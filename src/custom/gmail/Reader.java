@@ -50,7 +50,8 @@ public class Reader {
     }
 
     protected int getFrom(int messagesCount, int count, int lastId) {
-        return lastId == 0 ? messagesCount - count + 1: lastId - count;
+        int from = lastId == 0 ? messagesCount - count + 1: lastId - count;
+        return from <= 0 ? 1 : from;
     }
 
     protected int getTo(int messagesCount, int count, int lastId) {
