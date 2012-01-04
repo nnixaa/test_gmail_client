@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:gravity="center_vertical|center_horizontal">
+
+    <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginBottom="20dip"
+            android:textSize="22dip"
+            android:id="@+id/settings_title"
+            android:text="@string/settings_title"
+            />
+
+    <EditText
+            android:layout_height="60dip"
+            android:layout_width="250dip"
+            android:inputType="textEmailAddress"
+            android:id="@+id/settings_email_input"
+            />
+
+    <EditText
+            android:layout_height="60dip"
+            android:layout_width="250dip"
+            android:id="@+id/settings_password_input"
+            android:password="true"
+            />
+
+    <Button
+            android:layout_height="60dip"
+            android:layout_width="150dip"
+            android:layout_marginTop="20dip"
+            android:id="@+id/settings_button_submit"
+            android:text="@string/settings_save_button"
+            />
+
+</LinearLayout>

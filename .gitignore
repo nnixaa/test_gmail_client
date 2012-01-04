@@ -1,0 +1,11 @@
+
+/.idea
+/assets
+/bin
+/libs
+/out
+/gmail.iml
+/ant.properties
+/local.properties
+/project.properties
+/build.xml
