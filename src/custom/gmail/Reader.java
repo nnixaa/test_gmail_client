@@ -1,5 +1,6 @@
 package custom.gmail;
 
+import android.util.Log;
 import custom.gmail.exceptions.NoConnectionException;
 
 import javax.mail.Folder;
@@ -24,15 +25,18 @@ public class Reader {
         this.connector = connector;
     }
     
-    public List<Message> getMessages(String type, int from, int count) throws NoConnectionException, MessagingException {
+    public List<Message> getMessages(String type, int lastId, int count) throws NoConnectionException, MessagingException {
         if (this.connector.connect()) {
 
             Folder inbox = this.connector.getStore().getFolder(type);
             inbox.open(Folder.READ_ONLY);
 
-            int inboxCount  = inbox.getMessageCount();
-            int inboxFrom   = inboxCount - (from - 1) - count;
-            int inboxTo     = inboxCount - from;
+            Integer inboxFrom   = getFrom(inbox.getMessageCount(), count, lastId);
+            Integer inboxTo     = getTo(inbox.getMessageCount(), count, lastId);
+
+            Log.e(TAG, ((Integer)inbox.getMessageCount()).toString());
+            Log.e(TAG, inboxFrom.toString());
+            Log.e(TAG, inboxTo.toString());
 
             Message[] messages = inbox.getMessages(inboxFrom, inboxTo);
             List<Message> list = Arrays.asList(messages);
@@ -43,5 +47,13 @@ public class Reader {
         } else {
             throw new NoConnectionException("No connection, check your gmail email or password");
         }
+    }
+
+    protected int getFrom(int messagesCount, int count, int lastId) {
+        return lastId == 0 ? messagesCount - count + 1: lastId - count;
+    }
+
+    protected int getTo(int messagesCount, int count, int lastId) {
+        return lastId == 0 ? messagesCount : lastId - 1;
     }
 }

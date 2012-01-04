@@ -11,6 +11,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import com.example.gmail.proxies.GmailProxy;
 import custom.gmail.Connector;
+import custom.gmail.Reader;
 
 public class MainActivity extends Activity
 {
@@ -40,8 +41,9 @@ public class MainActivity extends Activity
         ListView messagesListView = (ListView) findViewById(R.id.messages_list);
 
         Connector connector = new Connector(email, password);
-        gmail = new GmailProxy(connector, MainActivity.this);
-        gmail.loadInbox(messagesListView, android.R.layout.simple_list_item_1, android.R.id.text1);
+
+        gmail = new GmailProxy(connector, MainActivity.this, Reader.MESSAGE_TYPE_INBOX);
+        gmail.firstPage(messagesListView, android.R.layout.simple_list_item_1, android.R.id.text1);
     }
 
     @Override

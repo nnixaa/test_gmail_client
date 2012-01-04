@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import custom.gmail.Connector;
@@ -28,40 +27,31 @@ public class GmailProxy {
     private Context context;
     private Connector connector;
 
-    private int page    = 1;
+    private int lastId  = 0;
     private int count   = 10;
+    private int page    = 1;
+
+    private String type;
 
     private SimpleCursorAdapter adapter;
 
-    public GmailProxy(Connector connector, Context context) {
+    public GmailProxy(Connector connector, Context context, String type) {
         this.connector      = connector;
         this.context        = context;
+        this.type           = type;
         this.databaseHelper = new DatabaseHelper(context);
-    }
-
-    public int getFrom() {
-        return page == 1 ? 1 : ((page - 1) * count) + 1;
-    }
-    
-    public int getTo() {
-        return page * count;
-    }
-
-    public int getCount() {
-        return count;
     }
 
     public void nextPage() {
         page ++;
-        Cursor c = getInboxMessages();
-        Log.e(TAG, ((Integer)c.getCount()).toString());
+        Cursor c = getMessages();
 
         adapter.changeCursor(c);
         adapter.notifyDataSetInvalidated();
     }
 
-    public void loadInbox(ListView listView, int layout, int subject_field) {
-        Cursor c = getInboxMessages();
+    public void firstPage(ListView listView, int layout, int subject_field) {
+        Cursor c = getMessages();
 
         adapter = new SimpleCursorAdapter(context,
                 layout, c,
@@ -71,35 +61,37 @@ public class GmailProxy {
         listView.setAdapter(adapter);
     }
 
-    public Cursor getInboxMessages() {
-        Log.e(TAG, ((Integer)getFrom()).toString());
-        Log.e(TAG, ((Integer)getTo()).toString());
-        Cursor cursor = getInboxMessagesFromDb(getFrom(), getTo());
+    public Cursor getMessages() {
 
+        Cursor cursor = getMessagesFromDb(getPage(), false);
         if (cursor.getCount() == 0) {
             // if empty, try to load messages from network
-            if (getInboxMessagesFromGmail(getFrom(), getCount()) > 0) {
-                cursor = getInboxMessagesFromDb(1, getTo());
-            }
+            getMessagesFromGmail(getLastId(), getCount());
         }
+        // reloads cursor from db
+        cursor = getMessagesFromDb(getPage(), true);
 
-        return getInboxMessagesFromDb(1, getTo());
+        cursor.moveToLast();
+        lastId = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.FIELD_ID));
+        cursor.moveToFirst();
+
+        return cursor;
     }
 
-    private int getInboxMessagesFromGmail(Integer from, Integer count) {
+    private int getMessagesFromGmail(int lastId, int count) {
 
         List<Message> messages = new ArrayList<Message>();
         Reader reader = new Reader(this.connector);
         try {
-            messages = reader.getMessages(Reader.MESSAGE_TYPE_INBOX, from, count);
+            messages = reader.getMessages(type, lastId, count);
 
             ContentValues cv = new ContentValues();
             for (Message m : messages) {
-                cv.put(DatabaseHelper.FIELD_ID, from);
-                Log.e(TAG, from.toString());
+                cv.put(DatabaseHelper.FIELD_ID, m.getMessageNumber());
                 cv.put(DatabaseHelper.FIELD_SUBJECT, m.getSubject());
+                cv.put(DatabaseHelper.FIELD_TYPE, type);
 
-                if (databaseHelper.getWritableDatabase().insert(databaseHelper.TABLE_NAME, null, cv) > 0) from++;
+                databaseHelper.getWritableDatabase().insert(databaseHelper.TABLE_NAME, null, cv);
 
             }
 
@@ -112,11 +104,30 @@ public class GmailProxy {
         return messages.size();
     }
 
-    private Cursor getInboxMessagesFromDb(Integer from, Integer count) {
-        String where = databaseHelper.FIELD_ID + " >= ? AND " + databaseHelper.FIELD_ID + " <= ?";
-        String[] selectionArgs = {from.toString(), count.toString()};
+    private Cursor getMessagesFromDb(Integer page, boolean all) {
+        String where = databaseHelper.FIELD_TYPE + " = ? ";
+        String[] selectionArgs = {type};
+        Integer count = page * getCount();
+        Integer from = 0;
 
-        return databaseHelper.getWritableDatabase().query(databaseHelper.TABLE_NAME, databaseHelper.COLUMNS, where, selectionArgs, null, null, null);
+        if (!all) {
+            from = page * getCount() - getCount();
+        }
+        String limit = from.toString() + "," + count.toString();
+
+        return databaseHelper.getWritableDatabase().query(databaseHelper.TABLE_NAME, databaseHelper.COLUMNS, where, selectionArgs, null, null, "_id DESC", limit);
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    private int getLastId() {
+        return lastId;
     }
 
     private static class DatabaseHelper extends SQLiteOpenHelper {
