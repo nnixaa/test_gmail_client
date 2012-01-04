@@ -28,6 +28,7 @@ public class GmailProxy {
     private Connector connector;
 
     private int lastId  = 0;
+    private int firstId = 0;
     private int count   = 10;
     private int page    = 1;
 
@@ -52,6 +53,8 @@ public class GmailProxy {
 
     public void firstPage(ListView listView, int layout, int subject_field) {
         Cursor c = getMessages();
+        c.moveToFirst();
+        firstId = c.getInt(c.getColumnIndex(DatabaseHelper.FIELD_ID));
 
         adapter = new SimpleCursorAdapter(context,
                 layout, c,
@@ -59,6 +62,18 @@ public class GmailProxy {
                 new int[] { subject_field });
 
         listView.setAdapter(adapter);
+    }
+
+    public void update() {
+        if (getNewMessagesFromGmail(getFirstId()) > 0) {
+
+            Cursor c = getMessagesFromDb(getPage(), true);
+            c.moveToFirst();
+            firstId = c.getInt(c.getColumnIndex(DatabaseHelper.FIELD_ID));
+
+            adapter.changeCursor(c);
+            adapter.notifyDataSetInvalidated();
+        }
     }
 
     public Cursor getMessages() {
@@ -104,6 +119,32 @@ public class GmailProxy {
         return messages.size();
     }
 
+    private int getNewMessagesFromGmail(int firstId) {
+
+        List<Message> messages = new ArrayList<Message>();
+        Reader reader = new Reader(this.connector);
+        try {
+            messages = reader.getNewMessages(firstId, type);
+
+            ContentValues cv = new ContentValues();
+            for (Message m : messages) {
+                cv.put(DatabaseHelper.FIELD_ID, m.getMessageNumber());
+                cv.put(DatabaseHelper.FIELD_SUBJECT, m.getSubject());
+                cv.put(DatabaseHelper.FIELD_TYPE, type);
+
+                databaseHelper.getWritableDatabase().insert(databaseHelper.TABLE_NAME, null, cv);
+
+            }
+
+        } catch (NoConnectionException e) {
+            Log.e(TAG, e.toString());
+        } catch (MessagingException e) {
+            Log.e(TAG, e.toString());
+        }
+        databaseHelper.getWritableDatabase().close();
+        return messages.size();
+    }
+
     private Cursor getMessagesFromDb(Integer page, boolean all) {
         String where = databaseHelper.FIELD_TYPE + " = ? ";
         String[] selectionArgs = {type};
@@ -129,6 +170,10 @@ public class GmailProxy {
 
     private int getLastId() {
         return lastId;
+    }
+    
+    private int getFirstId() {
+        return firstId;
     }
 
     private static class DatabaseHelper extends SQLiteOpenHelper {

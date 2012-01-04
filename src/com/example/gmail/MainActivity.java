@@ -63,7 +63,7 @@ public class MainActivity extends Activity
                 startActivity(intent);
                 return true;
             case R.id.menu_update:
-                gmail.nextPage();
+                gmail.update();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
