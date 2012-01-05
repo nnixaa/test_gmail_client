@@ -105,9 +105,9 @@ public class MainActivity extends Activity {
             String type = (String) params[0];
             Cursor cursor;
 
-            if (type == "update") {
+            if (type.equals("update")) {
                 cursor = gmailData.update();
-            } else if(type == "next_page") {
+            } else if(type.equals("next_page")) {
                 cursor = gmailData.nextPage();
             } else {
                 cursor = gmailData.firstPage();

@@ -23,7 +23,6 @@ public class GmailDataProxy {
     final private static String TAG = "GmailDataProxy";
 
     private DatabaseHelper databaseHelper;
-    private Context context;
     private Connector connector;
 
     private int lastId  = 0;
@@ -37,14 +36,13 @@ public class GmailDataProxy {
 
     public GmailDataProxy(Connector connector, Context context, String type) {
         this.connector      = connector;
-        this.context        = context;
         this.type           = type;
         this.databaseHelper = new DatabaseHelper(context);
-
     }
 
     /**
-     * Move the cursor to the first page and init adapter
+     * Move the cursor to the first page
+     * @return Cursor
      */
     public Cursor firstPage() {
         Cursor cursor = getMessages();
@@ -55,6 +53,7 @@ public class GmailDataProxy {
 
     /**
      * Moves the cursor to the next page
+     * @return Cursor
      */
     public Cursor nextPage() {
         page ++;
@@ -64,6 +63,7 @@ public class GmailDataProxy {
 
     /**
      * Updates the cursor from top
+     * @return Cursor
      */
     public Cursor update() {
         if (getNewMessagesFromGmail(getFirstId()) > 0) {
@@ -146,10 +146,12 @@ public class GmailDataProxy {
             for (Message m : messages) {
                 cv.put(DatabaseHelper.FIELD_ID, m.getMessageNumber());
                 cv.put(DatabaseHelper.FIELD_SUBJECT, m.getSubject());
+                cv.put(DatabaseHelper.FIELD_FROM, m.getFrom().toString());
+                cv.put(DatabaseHelper.FIELD_TO, m.getReplyTo().toString());
                 cv.put(DatabaseHelper.FIELD_TYPE, type);
+                cv.put(DatabaseHelper.FIELD_DATE, m.getSentDate().toString());
 
                 databaseHelper.getWritableDatabase().insert(DatabaseHelper.TABLE_NAME, null, cv);
-
             }
 
         } catch (NoConnectionException e) {
@@ -218,7 +220,7 @@ public class GmailDataProxy {
 
         DatabaseHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
-            context.deleteDatabase(DATABASE_NAME);
+//            context.deleteDatabase(DATABASE_NAME);
         }
 
         @Override
