@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/message_layout">
+
+    <RelativeLayout android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:id="@+id/message_layout">
+
+
+        <TextView android:layout_height="wrap_content"
+                  android:layout_width="fill_parent"
+                  android:id="@+id/message_subject_id"
+                  android:layout_alignTop="@+id/message_layout"
+                  android:textColor="#20AAD5"
+                  android:textSize="18sp"
+                  android:textStyle="bold"
+                  android:layout_marginLeft="9dip"
+                  android:layout_marginRight="9dip"/>
+
+        <TextView android:layout_height="wrap_content"
+                  android:layout_width="fill_parent"
+                  android:id="@+id/message_from_id"
+                  android:layout_below="@+id/message_subject_id"
+                  android:textColor="#419DDE"
+                  android:layout_marginLeft="9dip"
+                  android:layout_marginRight="9dip"/>
+
+        <TextView android:layout_height="wrap_content"
+                  android:layout_width="fill_parent"
+                  android:id="@+id/message_date_id"
+                  android:layout_below="@+id/message_from_id"
+                  android:textColor="#626962"
+                  android:layout_marginLeft="9dip"
+                  android:layout_marginRight="9dip"/>
+
+        <WebView android:layout_height="wrap_content"
+                  android:layout_width="fill_parent"
+                  android:id="@+id/message_content_id"
+                  android:layout_below="@+id/message_date_id"
+                  android:layout_alignBottom="@+id/message_layout"/>
+        
+
+
+    </RelativeLayout>
+</ScrollView>

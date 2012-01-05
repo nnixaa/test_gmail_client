@@ -10,10 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
+import android.widget.*;
 import com.example.gmail.proxies.GmailDataProxy;
 import custom.gmail.Connector;
 import custom.gmail.Reader;
@@ -70,6 +67,29 @@ public class MainActivity extends Activity {
                 findViewById(R.id.list_view_load_more).setVisibility(View.GONE);
                 findViewById(R.id.list_view_progress).setVisibility(View.VISIBLE);
                 new GmailLoader().execute("next_page");
+            }
+        });
+
+        // on item click
+        messagesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView parent, View v, int position, long id) {
+
+                Cursor cursor = adapter.getCursor();
+                cursor.moveToPosition(position);
+
+                Bundle bundle = new Bundle();
+                bundle.putInt("id", cursor.getInt(cursor.getColumnIndex(GmailDataProxy.DatabaseHelper.FIELD_ID)));
+                bundle.putString("subject", cursor.getString(cursor.getColumnIndex(GmailDataProxy.DatabaseHelper.FIELD_SUBJECT)));
+                bundle.putString("from", cursor.getString(cursor.getColumnIndex(GmailDataProxy.DatabaseHelper.FIELD_FROM)));
+                bundle.putString("to", cursor.getString(cursor.getColumnIndex(GmailDataProxy.DatabaseHelper.FIELD_TO)));
+                bundle.putString("date", cursor.getString(cursor.getColumnIndex(GmailDataProxy.DatabaseHelper.FIELD_DATE)));
+                bundle.putString("message", cursor.getString(cursor.getColumnIndex(GmailDataProxy.DatabaseHelper.FIELD_MESSAGE)));
+
+                Toast.makeText(MainActivity.this,cursor.getString(cursor.getColumnIndex(GmailDataProxy.DatabaseHelper.FIELD_FROM)) , Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(MainActivity.this, MessageActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
     }

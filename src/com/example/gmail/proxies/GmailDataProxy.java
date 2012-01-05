@@ -11,10 +11,14 @@ import custom.gmail.Connector;
 import custom.gmail.Reader;
 import custom.gmail.exceptions.NoConnectionException;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
+import javax.mail.*;
+import javax.mail.internet.MimeMultipart;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Working with gmail
@@ -116,7 +120,13 @@ public class GmailDataProxy {
             for (Message m : messages) {
                 cv.put(DatabaseHelper.FIELD_ID, m.getMessageNumber());
                 cv.put(DatabaseHelper.FIELD_SUBJECT, m.getSubject());
+                cv.put(DatabaseHelper.FIELD_FROM, m.getFrom()[0].toString());
+                cv.put(DatabaseHelper.FIELD_TO, m.getReplyTo()[0].toString());
                 cv.put(DatabaseHelper.FIELD_TYPE, type);
+
+                SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyy", Locale.getDefault());
+                cv.put(DatabaseHelper.FIELD_DATE, formatter.format(m.getSentDate()));
+                cv.put(DatabaseHelper.FIELD_MESSAGE, getMessageBody(m));
 
                 databaseHelper.getWritableDatabase().insert(DatabaseHelper.TABLE_NAME, null, cv);
             }
@@ -126,6 +136,7 @@ public class GmailDataProxy {
         } catch (MessagingException e) {
             Log.e(TAG, e.toString());
         }
+
         databaseHelper.getWritableDatabase().close();
         return messages.size();
     }
@@ -146,10 +157,13 @@ public class GmailDataProxy {
             for (Message m : messages) {
                 cv.put(DatabaseHelper.FIELD_ID, m.getMessageNumber());
                 cv.put(DatabaseHelper.FIELD_SUBJECT, m.getSubject());
-                cv.put(DatabaseHelper.FIELD_FROM, m.getFrom().toString());
-                cv.put(DatabaseHelper.FIELD_TO, m.getReplyTo().toString());
+                cv.put(DatabaseHelper.FIELD_FROM, m.getFrom()[0].toString());
+                cv.put(DatabaseHelper.FIELD_TO, m.getReplyTo()[0].toString());
                 cv.put(DatabaseHelper.FIELD_TYPE, type);
-                cv.put(DatabaseHelper.FIELD_DATE, m.getSentDate().toString());
+
+                SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyy", Locale.getDefault());
+                cv.put(DatabaseHelper.FIELD_DATE, formatter.format(m.getSentDate()));
+                cv.put(DatabaseHelper.FIELD_MESSAGE, getMessageBody(m));
 
                 databaseHelper.getWritableDatabase().insert(DatabaseHelper.TABLE_NAME, null, cv);
             }
@@ -200,6 +214,29 @@ public class GmailDataProxy {
         return firstId;
     }
 
+    private String getMessageBody(Part message) {
+
+        String content = "";
+        try {
+            Object o = message.getContent();
+            if (o instanceof String) {
+                content = (String) o;
+            } else if (o instanceof Multipart) {
+                Multipart mp = (Multipart) o;
+                int count = mp.getCount();
+                for (int i = 0; i < count; i++) {
+                    content = getMessageBody(mp.getBodyPart(i));
+                }
+            }
+
+        } catch (MessagingException e) {
+            Log.e(TAG, e.toString());
+        } catch (IOException e) {
+            Log.e(TAG, e.toString());
+        }
+        return content;
+    }
+    
     public static class DatabaseHelper extends SQLiteOpenHelper {
 
         final private static String DATABASE_NAME = "custom_gmail_client.db";
