@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="45dip"
+              android:gravity="center_horizontal|center_vertical">
+
+    <Button android:layout_width="wrap_content"
+            android:layout_height="45dip"
+            android:id="@+id/list_view_load_more"
+            android:text="@string/main_list_view_load_more"/>
+    <ProgressBar
+            android:id="@+id/list_view_progress"
+            android:indeterminate="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dip"
+            android:layout_marginRight="20dip"
+            android:layout_marginTop="10dip"
+            android:visibility="gone"
+            android:layout_centerVertical="true"
+            style="?android:attr/progressBarStyleSmall"/>
+
+</LinearLayout>

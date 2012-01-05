@@ -9,6 +9,7 @@
 
     <!-- Activities -->
     <string name="main_need_credentials">Enter your email and password</string>
+    <string name="main_list_view_load_more">Load More</string>
 
     <string name="settings_title">Specify your Credentials</string>
     <string name="settings_save_button">Save</string>

@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import custom.gmail.Connector;
 import custom.gmail.Reader;
@@ -20,8 +19,8 @@ import java.util.List;
 /**
  * Working with gmail
  */
-public class GmailProxy {
-    final private static String TAG = "GmailProxy";
+public class GmailDataProxy {
+    final private static String TAG = "GmailDataProxy";
 
     private DatabaseHelper databaseHelper;
     private Context context;
@@ -36,47 +35,54 @@ public class GmailProxy {
 
     private SimpleCursorAdapter adapter;
 
-    public GmailProxy(Connector connector, Context context, String type) {
+    public GmailDataProxy(Connector connector, Context context, String type) {
         this.connector      = connector;
         this.context        = context;
         this.type           = type;
         this.databaseHelper = new DatabaseHelper(context);
+
     }
 
-    public void nextPage() {
+    /**
+     * Move the cursor to the first page and init adapter
+     */
+    public Cursor firstPage() {
+        Cursor cursor = getMessages();
+        cursor.moveToFirst();
+        firstId = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.FIELD_ID));
+        return cursor;
+    }
+
+    /**
+     * Moves the cursor to the next page
+     */
+    public Cursor nextPage() {
         page ++;
-        Cursor c = getMessages();
-
-        adapter.changeCursor(c);
-        adapter.notifyDataSetInvalidated();
+        Cursor cursor = getMessages();
+        return cursor;
     }
 
-    public void firstPage(ListView listView, int layout, int subject_field) {
-        Cursor c = getMessages();
-        c.moveToFirst();
-        firstId = c.getInt(c.getColumnIndex(DatabaseHelper.FIELD_ID));
-
-        adapter = new SimpleCursorAdapter(context,
-                layout, c,
-                new String[] { DatabaseHelper.FIELD_SUBJECT },
-                new int[] { subject_field });
-
-        listView.setAdapter(adapter);
-    }
-
-    public void update() {
+    /**
+     * Updates the cursor from top
+     */
+    public Cursor update() {
         if (getNewMessagesFromGmail(getFirstId()) > 0) {
 
-            Cursor c = getMessagesFromDb(getPage(), true);
-            c.moveToFirst();
-            firstId = c.getInt(c.getColumnIndex(DatabaseHelper.FIELD_ID));
-
-            adapter.changeCursor(c);
-            adapter.notifyDataSetInvalidated();
+            Cursor cursor = getMessagesFromDb(getPage(), true);
+            cursor.moveToFirst();
+            firstId = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.FIELD_ID));
+            return cursor;
         }
+        return null;
     }
 
-    public Cursor getMessages() {
+    /*--------------------------------------------------------------------*/
+
+    /**
+     * Return messages from gmail or database based on current page
+     * @return Cursor
+     */
+    private Cursor getMessages() {
 
         Cursor cursor = getMessagesFromDb(getPage(), false);
         if (cursor.getCount() == 0) {
@@ -93,6 +99,12 @@ public class GmailProxy {
         return cursor;
     }
 
+    /**
+     * Saves messages from gmail
+     * @param lastId
+     * @param count
+     * @return int
+     */
     private int getMessagesFromGmail(int lastId, int count) {
 
         List<Message> messages = new ArrayList<Message>();
@@ -106,8 +118,7 @@ public class GmailProxy {
                 cv.put(DatabaseHelper.FIELD_SUBJECT, m.getSubject());
                 cv.put(DatabaseHelper.FIELD_TYPE, type);
 
-                databaseHelper.getWritableDatabase().insert(databaseHelper.TABLE_NAME, null, cv);
-
+                databaseHelper.getWritableDatabase().insert(DatabaseHelper.TABLE_NAME, null, cv);
             }
 
         } catch (NoConnectionException e) {
@@ -119,6 +130,11 @@ public class GmailProxy {
         return messages.size();
     }
 
+    /**
+     * Saves new messages from gmail
+     * @param firstId
+     * @return int
+     */
     private int getNewMessagesFromGmail(int firstId) {
 
         List<Message> messages = new ArrayList<Message>();
@@ -132,7 +148,7 @@ public class GmailProxy {
                 cv.put(DatabaseHelper.FIELD_SUBJECT, m.getSubject());
                 cv.put(DatabaseHelper.FIELD_TYPE, type);
 
-                databaseHelper.getWritableDatabase().insert(databaseHelper.TABLE_NAME, null, cv);
+                databaseHelper.getWritableDatabase().insert(DatabaseHelper.TABLE_NAME, null, cv);
 
             }
 
@@ -145,8 +161,14 @@ public class GmailProxy {
         return messages.size();
     }
 
+    /**
+     * Returns specified page from database
+     * @param page
+     * @param all
+     * @return Cursor
+     */
     private Cursor getMessagesFromDb(Integer page, boolean all) {
-        String where = databaseHelper.FIELD_TYPE + " = ? ";
+        String where = DatabaseHelper.FIELD_TYPE + " = ? ";
         String[] selectionArgs = {type};
 
         Integer count = page * getCount();
@@ -157,14 +179,14 @@ public class GmailProxy {
         }
         String limit = from.toString() + "," + count.toString();
 
-        return databaseHelper.getWritableDatabase().query(databaseHelper.TABLE_NAME, databaseHelper.COLUMNS, where, selectionArgs, null, null, "_id DESC", limit);
+        return databaseHelper.getWritableDatabase().query(DatabaseHelper.TABLE_NAME, DatabaseHelper.COLUMNS, where, selectionArgs, null, null, "_id DESC", limit);
     }
 
-    public int getCount() {
+    private int getCount() {
         return count;
     }
 
-    public int getPage() {
+    private int getPage() {
         return page;
     }
 
@@ -176,7 +198,7 @@ public class GmailProxy {
         return firstId;
     }
 
-    private static class DatabaseHelper extends SQLiteOpenHelper {
+    public static class DatabaseHelper extends SQLiteOpenHelper {
 
         final private static String DATABASE_NAME = "custom_gmail_client.db";
         final private static int DATABASE_VERSION = 1;
@@ -196,7 +218,7 @@ public class GmailProxy {
 
         DatabaseHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
-//            context.deleteDatabase(DATABASE_NAME);
+            context.deleteDatabase(DATABASE_NAME);
         }
 
         @Override
