@@ -2,7 +2,6 @@ package com.example.gmail;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Xml;
 import android.webkit.WebView;
 import android.widget.TextView;
 
@@ -36,6 +35,5 @@ public class MessageActivity extends Activity {
             WebView messageView = (WebView) findViewById(R.id.message_content_id);
             messageView.loadData(message, "text/html", "utf8");
         }
-
     }
 }

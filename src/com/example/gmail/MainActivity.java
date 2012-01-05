@@ -14,6 +14,7 @@ import android.widget.*;
 import com.example.gmail.proxies.GmailDataProxy;
 import custom.gmail.Connector;
 import custom.gmail.Reader;
+import custom.gmail.Sender;
 
 public class MainActivity extends Activity {
 
@@ -53,7 +54,7 @@ public class MainActivity extends Activity {
         messagesListView.setAdapter(adapter);
 
         // creates imap gmail connector
-        Connector connector = new Connector(email, password);
+        final Connector connector = new Connector(email, password);
         // creates gmail adapter proxy and move cursor to the first page
         gmailData = new GmailDataProxy(connector, MainActivity.this, Reader.MESSAGE_TYPE_INBOX);
 

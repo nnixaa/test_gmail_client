@@ -2,10 +2,7 @@ package custom.gmail;
 
 import android.util.Log;
 
-import javax.mail.MessagingException;
-import javax.mail.NoSuchProviderException;
-import javax.mail.Session;
-import javax.mail.Store;
+import javax.mail.*;
 import java.util.Properties;
 
 /**
