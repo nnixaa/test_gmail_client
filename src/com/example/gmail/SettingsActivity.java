@@ -47,7 +47,7 @@ public class SettingsActivity extends Activity {
                     editor.putString(PREF_PASS_KEY, passwordValue);
                     editor.commit();
 
-                    Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
+                    Intent intent = new Intent(SettingsActivity.this, InboxActivity.class);
                     startActivity(intent);
                     finish();
                 }

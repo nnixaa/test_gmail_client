@@ -39,15 +39,17 @@ public final class R {
         /**  Global 
          */
         public static final int app_name=0x7f030000;
-        public static final int main_list_view_load_more=0x7f030004;
+        public static final int app_tab_one=0x7f030001;
+        public static final int app_tab_two=0x7f030002;
+        public static final int main_list_view_load_more=0x7f030006;
         /**  Activities 
          */
-        public static final int main_need_credentials=0x7f030003;
+        public static final int main_need_credentials=0x7f030005;
         /**  Menu 
          */
-        public static final int menu_settings_item=0x7f030001;
-        public static final int menu_update_item=0x7f030002;
-        public static final int settings_save_button=0x7f030006;
-        public static final int settings_title=0x7f030005;
+        public static final int menu_settings_item=0x7f030003;
+        public static final int menu_update_item=0x7f030004;
+        public static final int settings_save_button=0x7f030008;
+        public static final int settings_title=0x7f030007;
     }
 }

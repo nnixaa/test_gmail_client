@@ -2,6 +2,8 @@
 <resources>
     <!-- Global -->
     <string name="app_name">gmail</string>
+    <string name="app_tab_one">Inbox</string>
+    <string name="app_tab_two">Sent</string>
 
     <!-- Menu -->
     <string name="menu_settings_item">Settings</string>
