@@ -27,42 +27,43 @@ public class Reader {
     }
     
     public List<Message> getMessages(String type, int lastId, int count) throws NoConnectionException, MessagingException {
-        if (this.connector.connect()) {
 
-            Folder folder = this.connector.getStore().getFolder(type);
-            folder.open(Folder.READ_ONLY);
-
-            Integer inboxFrom   = getFrom(folder.getMessageCount(), count, lastId);
-            Integer inboxTo     = getTo(folder.getMessageCount(), count, lastId);
-
-            Message[] messages = folder.getMessages(inboxFrom, inboxTo);
-            List<Message> list = Arrays.asList(messages);
-            Collections.reverse(list);
-
-            return list;
-
-        } else {
+        if (!this.connector.connect()) {
             throw new NoConnectionException("No connection, check your gmail email or password");
         }
+
+        Folder folder = this.connector.getStore().getFolder(type);
+        folder.open(Folder.READ_ONLY);
+
+        Integer inboxFrom   = getFrom(folder.getMessageCount(), count, lastId);
+        Integer inboxTo     = getTo(folder.getMessageCount(), count, lastId);
+
+        Message[] messages = folder.getMessages(inboxFrom, inboxTo);
+        List<Message> list = Arrays.asList(messages);
+        Collections.reverse(list);
+
+        return list;
+
     }
 
     public List<Message> getNewMessages(int firstId, String type) throws NoConnectionException, MessagingException {
-        if (this.connector.connect()) {
-            List<Message> list = new ArrayList<Message>();
 
-            Folder folder = this.connector.getStore().getFolder(type);
-            folder.open(Folder.READ_ONLY);
-
-            if (folder.getMessageCount() > firstId) {
-                list = getMessages(type, 0, folder.getMessageCount() - firstId);
-            }
-            Log.e(TAG, ((Integer)folder.getMessageCount()).toString());
-            Log.e(TAG, ((Integer)firstId).toString());
-
-            return list;
-        } else {
+        if (!this.connector.connect()) {
             throw new NoConnectionException("No connection, check your gmail email or password");
         }
+
+        List<Message> list = new ArrayList<Message>();
+
+        Folder folder = this.connector.getStore().getFolder(type);
+        folder.open(Folder.READ_ONLY);
+
+        if (folder.getMessageCount() > firstId) {
+            list = getMessages(type, 0, folder.getMessageCount() - firstId);
+        }
+        Log.e(TAG, ((Integer)folder.getMessageCount()).toString());
+        Log.e(TAG, ((Integer)firstId).toString());
+
+        return list;
     }
 
 

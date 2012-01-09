@@ -14,7 +14,6 @@ import android.widget.*;
 import com.example.gmail.proxies.GmailDataProxy;
 import custom.gmail.Connector;
 import custom.gmail.Reader;
-import custom.gmail.Sender;
 
 public class MainActivity extends Activity {
 
