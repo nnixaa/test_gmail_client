@@ -10,46 +10,57 @@ package com.example.gmail;
 public final class R {
     public static final class attr {
     }
+    public static final class drawable {
+        public static final int tab_focus=0x7f020000;
+        public static final int tab_indicator=0x7f020001;
+        public static final int tab_indicator_v4=0x7f020002;
+        public static final int tab_press=0x7f020003;
+        public static final int tab_selected=0x7f020004;
+        public static final int tab_unselected=0x7f020005;
+    }
     public static final class id {
-        public static final int list_view_load_more=0x7f050000;
-        public static final int list_view_progress=0x7f050001;
-        public static final int menu_settings=0x7f05000c;
-        public static final int menu_update=0x7f05000d;
-        public static final int message_content_id=0x7f050007;
-        public static final int message_date_id=0x7f050006;
-        public static final int message_from_id=0x7f050005;
-        public static final int message_layout=0x7f050003;
-        public static final int message_subject_id=0x7f050004;
-        public static final int messages_list=0x7f050002;
-        public static final int settings_button_submit=0x7f05000b;
-        public static final int settings_email_input=0x7f050009;
-        public static final int settings_password_input=0x7f05000a;
-        public static final int settings_title=0x7f050008;
+        public static final int list_view_load_more=0x7f060000;
+        public static final int list_view_progress=0x7f060001;
+        public static final int menu_settings=0x7f06000d;
+        public static final int menu_update=0x7f06000e;
+        public static final int message_content_id=0x7f060007;
+        public static final int message_date_id=0x7f060006;
+        public static final int message_from_id=0x7f060005;
+        public static final int message_layout=0x7f060003;
+        public static final int message_subject_id=0x7f060004;
+        public static final int messages_list=0x7f060002;
+        public static final int settings_button_submit=0x7f06000b;
+        public static final int settings_email_input=0x7f060009;
+        public static final int settings_password_input=0x7f06000a;
+        public static final int settings_title=0x7f060008;
+        public static final int tab_title=0x7f06000c;
     }
     public static final class layout {
-        public static final int list_view_footer=0x7f020000;
-        public static final int main=0x7f020001;
-        public static final int message_detail=0x7f020002;
-        public static final int settings=0x7f020003;
+        public static final int list_view_footer=0x7f030000;
+        public static final int main=0x7f030001;
+        public static final int message_detail=0x7f030002;
+        public static final int settings=0x7f030003;
+        public static final int tab_content=0x7f030004;
+        public static final int tab_indicator=0x7f030005;
     }
     public static final class menu {
-        public static final int main_menu=0x7f040000;
+        public static final int main_menu=0x7f050000;
     }
     public static final class string {
         /**  Global 
          */
-        public static final int app_name=0x7f030000;
-        public static final int app_tab_one=0x7f030001;
-        public static final int app_tab_two=0x7f030002;
-        public static final int main_list_view_load_more=0x7f030006;
+        public static final int app_name=0x7f040000;
+        public static final int app_tab_one=0x7f040001;
+        public static final int app_tab_two=0x7f040002;
+        public static final int main_list_view_load_more=0x7f040006;
         /**  Activities 
          */
-        public static final int main_need_credentials=0x7f030005;
+        public static final int main_need_credentials=0x7f040005;
         /**  Menu 
          */
-        public static final int menu_settings_item=0x7f030003;
-        public static final int menu_update_item=0x7f030004;
-        public static final int settings_save_button=0x7f030008;
-        public static final int settings_title=0x7f030007;
+        public static final int menu_settings_item=0x7f040003;
+        public static final int menu_update_item=0x7f040004;
+        public static final int settings_save_button=0x7f040008;
+        public static final int settings_title=0x7f040007;
     }
 }

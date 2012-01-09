@@ -18,7 +18,8 @@ public class Reader {
 
     final private static String TAG = "Reader";
     final public static String MESSAGE_TYPE_INBOX = "inbox";
-    final public static String MESSAGE_TYPE_SENT  = "sent";
+    // WFT?
+    final public static String MESSAGE_TYPE_SENT  = "[Gmail]/Отправленные";
 
     protected Connector connector;
     
@@ -31,10 +32,16 @@ public class Reader {
         if (!this.connector.connect()) {
             throw new NoConnectionException("No connection, check your gmail email or password");
         }
+//
+//        javax.mail.Folder[] folders = this.connector.getStore().getDefaultFolder().list("*");
+//        for (javax.mail.Folder f : folders) {
+//            if ((f.getType() & javax.mail.Folder.HOLDS_MESSAGES) != 0) {
+//                Log.e(TAG, f.getURLName() + ": " + f.getMessageCount());
+//            }
+//        }
 
         Folder folder = this.connector.getStore().getFolder(type);
         folder.open(Folder.READ_ONLY);
-
         Integer inboxFrom   = getFrom(folder.getMessageCount(), count, lastId);
         Integer inboxTo     = getTo(folder.getMessageCount(), count, lastId);
 

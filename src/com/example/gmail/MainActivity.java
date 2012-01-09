@@ -1,19 +1,30 @@
 package com.example.gmail;
 
-import android.app.TabActivity;
+import android.app.ActivityGroup;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.TabHost;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
  */
-public class MainActivity extends TabActivity {
+public class MainActivity extends ActivityGroup {
+
+    private TabHost mTabHost;
+
+    private void setupTabHost() {
+        mTabHost = (TabHost) findViewById(android.R.id.tabhost);
+        mTabHost.setup(this.getLocalActivityManager());
+    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.tab_content);
 
         SharedPreferences settings = MainActivity.this.getSharedPreferences(SettingsActivity.PREF_NAME, 0);
         String email    = settings.getString(SettingsActivity.PREF_EMAIL_KEY, "");
@@ -28,24 +39,30 @@ public class MainActivity extends TabActivity {
             return;
         }
 
-        Resources resources = getResources();
-        TabHost tabHost = getTabHost();
-
-        TabHost.TabSpec tabSpec;
+        setupTabHost();
         Intent intent;
 
-        // Timeline acivity, default
         intent = new Intent().setClass(this, InboxActivity.class);
-        tabSpec = tabHost.newTabSpec("plans").setIndicator(getString(R.string.app_tab_one))
-                .setContent(intent);
-        tabHost.addTab(tabSpec);
+        setupTab(intent, "Tab 1");
 
-        // Public activity
         intent = new Intent().setClass(this, OutboxActivity.class);
-        tabSpec = tabHost.newTabSpec("explore").setIndicator(getString(R.string.app_tab_two))
-                .setContent(intent);
-        tabHost.addTab(tabSpec);
+        setupTab(intent, "Tab 2");
 
-        tabHost.setCurrentTab(0);
     }
+
+    private void setupTab(final Intent intent, final String tag) {
+        View tabview = createTabView(mTabHost.getContext(), tag);
+
+        TabHost.TabSpec setContent = mTabHost.newTabSpec(tag).setIndicator(tabview).setContent(intent);
+        mTabHost.addTab(setContent);
+
+    }
+
+    private static View createTabView(final Context context, final String text) {
+        View view = LayoutInflater.from(context).inflate(R.layout.tab_indicator, null);
+        TextView tv = (TextView) view.findViewById(R.id.tab_title);
+        tv.setText(text);
+        return view;
+    }
+
 }

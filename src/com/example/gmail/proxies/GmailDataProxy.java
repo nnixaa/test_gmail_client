@@ -50,8 +50,10 @@ public class GmailDataProxy {
      */
     public Cursor firstPage() {
         Cursor cursor = getMessages();
-        cursor.moveToFirst();
-        firstId = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.FIELD_ID));
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            firstId = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.FIELD_ID));
+        }
         return cursor;
     }
 
@@ -95,11 +97,11 @@ public class GmailDataProxy {
         }
         // reloads cursor from db
         cursor = getMessagesFromDb(getPage(), true);
-
-        cursor.moveToLast();
-        lastId = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.FIELD_ID));
-        cursor.moveToFirst();
-
+        if (cursor.getCount() > 0) {
+            cursor.moveToLast();
+            lastId = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.FIELD_ID));
+            cursor.moveToFirst();
+        }
         return cursor;
     }
 
